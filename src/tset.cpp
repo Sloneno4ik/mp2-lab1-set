@@ -5,6 +5,7 @@
 //
 // Множество - реализация через битовые поля
 #include "tset.h"
+#include "tbitfield.h"
 TSet::TSet(int mp) : BitField(mp)
 {
 	MaxPower = mp;
@@ -24,7 +25,7 @@ int TSet::GetMaxPower(void) const // получить макс. к-во эл-т�
 {
 	return MaxPower;
 }
-int TSet::IsMember(const int Elem) const // элемент множества?
+int TSet::IsMember(const int Elem) const // элемент множества
 {
 	return BitField.GetBit(Elem);
 }

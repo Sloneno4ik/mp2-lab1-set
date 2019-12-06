@@ -16,9 +16,11 @@ private:
   int MaxPower;       // максимальная мощность множества
   TBitField BitField; // битовое поле для хранения характеристического вектора
 public:
-	TSet(int mp) : BitField(mp) { MaxPower = mp; }
-  TSet(const TSet &s):MaxPower       // конструктор копирования
-  TSet(const TBitField &bf): BitField(bf) // конструктор преобразования типа
+	TSet(int mp);
+	TSet(const TSet& s);     // конструктор копирования
+  /*TSet(const TBitField& bf) : BitField(bf)
+	  TSet(int mp);*/
+  // конструктор преобразования типа
   operator TBitField();      // преобразование типа к битовому полю
   // доступ к битам
   int GetMaxPower(void) const;     // максимальная мощность множества
