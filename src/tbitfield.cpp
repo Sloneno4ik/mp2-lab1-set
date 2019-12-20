@@ -1,17 +1,21 @@
 // ННГУ, ВМК, Курс "Методы программирования-2", С++, ООП
 //
 // tbitfield.cpp - Copyright (c) Гергель В.П. 07.05.2001
-//   Переработано для Microsoft Visual Studio 2008 Сысоевым А.В. (19.04.2015)
+// Переработано для Microsoft Visual Studio 2008 Сысоевым А.В. (19.04.2015)
 //
 // Битовое поле
-
 #include "tbitfield.h"
-
 TBitField::TBitField(int len)
 {
+	if (len < 0)
+		throw 7;
 	BitLen = len;
 	MemLen = BitLen / (8 * sizeof(TELEM)) + 1;
 	pMem = new TELEM[MemLen];
+	for (int i = 0; i < MemLen; i++)
+	{
+		pMem[i] = 0;
+	}
 }
 
 TBitField::TBitField(const TBitField& bf) // конструктор копирования
@@ -37,15 +41,14 @@ int TBitField::GetMemIndex(const int n) const // индекс Мем для би
 
 TELEM TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
-	int v;
-	v = n % 32;
+	int a;
+	a = n % 32;
 	TELEM tmp = 1;
-	tmp = tmp << v;
+	tmp = tmp << a;
 	return tmp;
 }
 
 // доступ к битам битового поля
-
 int TBitField::GetLength(void) const // получить длину (к-во битов)
 {
 	return BitLen;
@@ -53,27 +56,47 @@ int TBitField::GetLength(void) const // получить длину (к-во б�
 
 void TBitField::SetBit(const int n) // установить бит
 {
+	if (n < 0 || n > BitLen)
+		throw - 8;
 	int i = GetMemIndex(n);
 	pMem[i] |= GetMemMask(n);
 }
 
 void TBitField::ClrBit(const int n) // очистить бит
 {
+	if (n < 0 || n > BitLen)
+		throw 777;
 	int i = GetMemIndex(n);
 	pMem[i] &= ~GetMemMask(n);
 }
 
 int TBitField::GetBit(const int n) const // получить значение бита
 {
+	if (n < 0 || n > BitLen)
+		throw 8;
 	int i = GetMemIndex(n);
 	if ((pMem[i] & GetMemMask(n)) != 0)
+	{
 		return 1;
+	}
+	return 0;
 }
 
 // битовые операции
 
 TBitField& TBitField::operator=(const TBitField& bf) // присваивание
 {
+	BitLen = bf.BitLen;
+	if (MemLen != bf.MemLen)
+	{
+		MemLen = bf.MemLen;
+		delete[] pMem;
+		pMem = new TELEM[MemLen];
+	}
+	for (int i = 0; i < MemLen; i++)
+	{
+		pMem[i] = bf.pMem[i];
+	}
 	return *this;
 }
 
@@ -207,12 +230,12 @@ TBitField TBitField::operator~(void) // отрицание
 	for (int i = 0; i < MemLen; i++)
 	{
 		bf.pMem[i] = ~pMem[i];
+
 	}
 	return bf;
 }
 
 // ввод/вывод
-
 istream& operator>>(istream& istr, TBitField& bf) // ввод
 {
 	char c;
@@ -237,14 +260,7 @@ ostream& operator<<(ostream& ostr, const TBitField& bf) // вывод
 {
 	for (int i = 0; i < bf.BitLen; i++)
 	{
-		if (bf.GetBit(i) != 0)
-		{
-			ostr << 1;
-		}
-		else
-		{
-			ostr << 0;
-		}
+		ostr << bf.GetBit(i);
 	}
 	return ostr;
 }
